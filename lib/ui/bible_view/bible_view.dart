@@ -404,62 +404,6 @@ class _BibleViewState extends ConsumerState<BibleView> {
                 ),
               );
 
-              Widget fontControls = Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 17),
-                child: Row(
-                  children: [
-                    Text(ref.watch(readerSettingsRepositoryProvider).typeFace,
-                        style: Theme.of(context).textTheme.headline5),
-                    const Spacer(),
-                    Column(
-                      children: [
-                        GestureDetector(
-                          onTap: () async {
-                            await ref
-                                .read(readerSettingsRepositoryProvider)
-                                .setTypeFace('New York');
-                            setState(() {});
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Text(
-                              'New York',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline4
-                                  ?.copyWith(
-                                    fontFamily: 'New York',
-                                  ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 17),
-                        GestureDetector(
-                          onTap: () async {
-                            await ref
-                                .read(readerSettingsRepositoryProvider)
-                                .setTypeFace('Inter');
-                            setState(() {});
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Text(
-                              'Inter',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline4
-                                  ?.copyWith(
-                                    fontFamily: 'Inter',
-                                  ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-
               Widget lineHeightControls = Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 17),
                 child: Row(
@@ -531,9 +475,6 @@ class _BibleViewState extends ConsumerState<BibleView> {
                     const SizedBox(height: 17),
                     const Divider(),
                     const SizedBox(height: 5),
-                    fontControls,
-                    const Divider(height: 17),
-                    const SizedBox(height: 8.5),
                     lineHeightControls,
                     const Divider(height: 34),
                   ],
@@ -642,16 +583,33 @@ class _BibleViewState extends ConsumerState<BibleView> {
                     return Column(
                       children: [
                         if (index == 0)
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 24),
-                            child: Divider(),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 24),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 24, vertical: 12),
+                                  child: Text(
+                                    'Old Testament',
+                                    style:
+                                        Theme.of(context).textTheme.headline6,
+                                  ),
+                                ),
+                                const Divider(),
+                              ],
+                            ),
                           ),
                         _bookCard(books[index]),
-                        // if (index == 0)
-                        //   const Padding(
-                        //     padding: EdgeInsets.symmetric(horizontal: 24),
-                        //     child: Divider(),
-                        //   ),
+                        if (index == 38)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 12),
+                            child: Text(
+                              'New Testament',
+                              style: Theme.of(context).textTheme.headline6,
+                            ),
+                          ),
                       ],
                     );
                   },
