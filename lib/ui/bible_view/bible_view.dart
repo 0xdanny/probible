@@ -31,6 +31,9 @@ class _BibleViewState extends ConsumerState<BibleView> {
   @override
   void initState() {
     _loadData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showBookAndChapterBottomSheet();
+    });
     super.initState();
   }
 
