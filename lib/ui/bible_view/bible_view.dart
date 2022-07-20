@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:screen_brightness/screen_brightness.dart';
 
 import '../../config/exceptions.dart';
 import '../../models/book.dart';
 import '../../models/chapter.dart';
 import '../../models/translation.dart';
+import '../../providers/ad_state_provider.dart';
 import '../../providers/bible_books_provider.dart';
 import '../../providers/bible_chapters_provider.dart';
 import '../../providers/bible_repository_provider.dart';
 import '../../providers/bible_translations_provider.dart';
 import '../../providers/last_translation_book_chapter_provider.dart';
 import '../../providers/reader_settings_repository_provider.dart';
+import '../../services/ad_state.dart';
 import '../../services/bible_service.dart';
 import '../widgets/error_body.dart';
 import '../widgets/unexpected_error.dart';
@@ -27,6 +30,7 @@ class BibleView extends ConsumerStatefulWidget {
 
 class _BibleViewState extends ConsumerState<BibleView> {
   final _scrollController = ScrollController();
+  BannerAd? _ad;
 
   @override
   void initState() {
@@ -34,12 +38,43 @@ class _BibleViewState extends ConsumerState<BibleView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showBookAndChapterBottomSheet();
     });
+
+    final bibleAd = ref.read(adStateProvider).homeViewBannerAd;
+
+    _ad = BannerAd(
+      adUnitId: bibleAd.adUnitId,
+      size: AdSize.banner,
+      request: bibleAd.request,
+      listener: BannerAdListener(
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          debugPrint('Failed to load a banner ad: ${error.message}');
+          setState(() {
+            homeViewBannerAdIsLoaded = false;
+          });
+
+          ad.dispose();
+        },
+        onAdLoaded: (Ad ad) {
+          setState(() {
+            homeViewBannerAdIsLoaded = true;
+          });
+        },
+      ),
+    );
+
+    _ad!.load();
     super.initState();
   }
 
   void _loadData() async {
     ref.read(localRepositoryProvider.notifier).loadLastChapterAndTranslation();
     ref.read(readerSettingsRepositoryProvider).loadData();
+  }
+
+  @override
+  void dispose() {
+    _ad!.dispose();
+    super.dispose();
   }
 
   @override
@@ -112,7 +147,14 @@ class _BibleViewState extends ConsumerState<BibleView> {
             controller: _scrollController,
             slivers: [
               _buildMobileHeader(context, ref, translations, books, chapter),
-              reader()
+              reader(),
+              if (homeViewBannerAdIsLoaded)
+                Container(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  width: _ad!.size.width.toDouble(),
+                  height: _ad!.size.height.toDouble(),
+                  child: AdWidget(ad: _ad!),
+                ),
             ],
           ),
         ),
