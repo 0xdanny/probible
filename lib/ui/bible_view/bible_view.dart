@@ -141,22 +141,28 @@ class _BibleViewState extends ConsumerState<BibleView> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: SafeArea(
-        child: Scrollbar(
-          controller: _scrollController,
-          child: CustomScrollView(
-            controller: _scrollController,
-            slivers: [
-              _buildMobileHeader(context, ref, translations, books, chapter),
-              reader(),
-              if (homeViewBannerAdIsLoaded)
-                Container(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  width: _ad!.size.width.toDouble(),
-                  height: _ad!.size.height.toDouble(),
-                  child: AdWidget(ad: _ad!),
+        child: Column(
+          children: [
+            Expanded(
+              child: Scrollbar(
+                controller: _scrollController,
+                child: CustomScrollView(
+                  controller: _scrollController,
+                  slivers: [
+                    _buildMobileHeader(
+                        context, ref, translations, books, chapter),
+                    reader(),
+                  ],
                 ),
-            ],
-          ),
+              ),
+            ),
+            if (homeViewBannerAdIsLoaded)
+              SizedBox(
+                width: _ad!.size.width.toDouble(),
+                height: _ad!.size.height.toDouble(),
+                child: AdWidget(ad: _ad!),
+              ),
+          ],
         ),
       ),
     );
