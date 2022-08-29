@@ -7,11 +7,11 @@ var homeViewBannerAdIsLoaded = false;
 class AdState {
   // iOS ad ids
   static const _iosHomeViewBannerAdId =
-      'ca-app-pub-8043699384122234/3735513456';
+      'ca-app-pub-8043699384122234/4425009054';
 
   // Android ad ids
   static const _androidHomeViewBannerAdId =
-      'ca-app-pub-8043699384122234/3735513456';
+      'ca-app-pub-8043699384122234/4425009054';
 
   String get homeViewbannerAdUnitId {
     if (Platform.isAndroid) {
